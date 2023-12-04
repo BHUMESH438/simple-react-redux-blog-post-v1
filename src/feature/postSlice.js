@@ -1,35 +1,11 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit';
-import { sub } from 'date-fns';
-import { cs } from 'date-fns/locale';
 
-const initialState = [
-  {
-    id: '1',
-    title: 'bhumesh1',
-    content: 'react js like it',
-    date: sub(new Date(), { minutes: 10 }).toISOString(),
-    reactions: {
-      thumbsUp: 0,
-      wow: 0,
-      heart: 0,
-      rocket: 0,
-      coffee: 0
-    }
-  },
-  {
-    id: '2',
-    title: 'bhumesh2',
-    content: 'vuejs like it',
-    date: sub(new Date(), { minutes: 5 }).toISOString(),
-    reactions: {
-      thumbsUp: 0,
-      wow: 0,
-      heart: 0,
-      rocket: 0,
-      coffee: 0
-    }
-  }
-];
+const POST_URL = 'https://jsonplaceholder.typicode.com/posts';
+const initialState = {
+  posts: [],
+  status: 'idle',
+  error: null
+};
 const postSlice = createSlice({
   name: 'post',
   initialState,
@@ -37,7 +13,7 @@ const postSlice = createSlice({
     //reducer with reducer and data structure
     postAdded: {
       reducer(state, action) {
-        state.push(action.payload);
+        state.posts.push(action.payload);
       },
       prepare(title, content, userId) {
         return {
@@ -62,7 +38,7 @@ const postSlice = createSlice({
     //reducer
     reactionAdded(state, action) {
       const { postId, reaction } = action.payload;
-      const existingPost = state.find(post => post.id === postId);
+      const existingPost = state.posts.find(post => post.id === postId);
       if (existingPost) {
         console.log(existingPost);
         existingPost.reactions[reaction]++;
@@ -70,6 +46,6 @@ const postSlice = createSlice({
     }
   }
 });
-export const getpostSlice = state => state.postSlice;
+export const getpostSlice = state => state.postSlice.posts;
 export const { postAdded, reactionAdded } = postSlice.actions;
 export default postSlice.reducer;
